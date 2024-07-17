@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { TodoProvider } from './contexts'
 import TodoForm from './components/TodoForm'
 import TodoItem from './components/TodoItem'
@@ -24,6 +24,22 @@ function App() {
     (prevTodo.id===id?{...prevTodo,completed:!prevTodo.completed}:prevTodo)))
   }
 
+   useEffect(() => {
+    const todos = localStorage.getItem("todos")
+
+    if (todos ) {
+      const jsonTodo=JSON.parse(todos)
+      if(jsonTodo.length>0)
+      setTodos(jsonTodo)
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos))
+  }, [todos])
+  
+  
+
   return (
     <TodoProvider value={{todos,addTodo,updateTodo,deleteTodo,toggleComplete}}>
     <div className="bg-[#172842] min-h-screen py-8">
@@ -35,13 +51,13 @@ function App() {
                     </div>
                     <div className="flex flex-wrap gap-y-3">
                         {/*Loop and Add TodoItem here */}
-                        {
-                          todos.map((todo)=>(
-                            <div key={todo.id} className=''>
-                              <TodoItem todo={todo}/>
-                            </div>
-                          ))
-                        }
+                        {todos.map((todo) => (
+                          <div key={todo.id}
+                          className='w-full'
+                          >
+                            <TodoItem todo={todo} />
+                          </div>
+                        ))}
                     </div>
                 </div>
     </div>
